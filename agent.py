@@ -218,16 +218,12 @@ class YourAgent:
             return AgentResult(answer=self._refusal(), trace=tuple(trace))
 
         retrieved_ids = {s.chunk.doc_id for s in scored}
-        # Check for adversarial content in both question AND retrieved passages
-        question_adversarial = any(phrase in question.lower() for phrase in _INSTRUCTION_SHAPED)
-        context_adversarial = self._instruction_shaped_context(scored)
-        adversarial = question_adversarial or context_adversarial
-
+        adversarial = self._instruction_shaped_context(scored)
         if adversarial:
             trace.append(
                 TraceEvent(
                     "decision",
-                    f"adversarial detected ({'in question' if question_adversarial else 'in context'}); answer will be flagged",
+                    "instruction-shaped text found in retrieved passages; answer will be flagged",
                 )
             )
 
